@@ -5,7 +5,7 @@ const UserPro  = require('../models/userProfile')
 
 
 
-const LoginAuth = async (req, res, next) => {
+const GetProfile = async (req, res, next) => {
   try {
     const token = req.cookies.jwtoken;
     if (!token) {
@@ -23,6 +23,8 @@ const LoginAuth = async (req, res, next) => {
     req.token = token;
     req.rootUser = rootUser;
     req.userID = rootUser._id;
+
+    const userProfile = await UserPro.findOne({refId:rootUser._id})
     next();
   } catch (err) {
     res.status(401).send('Unauthorized: No valid token found');
@@ -30,4 +32,4 @@ const LoginAuth = async (req, res, next) => {
   }
 };
 
-module.exports = LoginAuth;
+module.exports = GetProfile;
