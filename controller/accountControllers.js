@@ -19,7 +19,6 @@ const googleRoute = async (req, res) => {
           console.log('User saved successfully.');
 
           let token = jwt.sign({  email },process.env.SECRET_KEY, { expiresIn: '1d' });
-          console.log('Generated Token:', token);
         
           res.cookie('jwtoken', token, {
           expires: new Date(Date.now() + 2589200000),

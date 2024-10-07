@@ -25,15 +25,7 @@ const UserProfile = new mongoose.Schema({
     weight : {
         type: Number,
     },
-    program : [
-        {
-            ProgramId : {
-                type : String,
-            }
-           
-        }
-    ]
-
+    
 });
 
 

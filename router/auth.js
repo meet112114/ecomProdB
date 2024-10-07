@@ -8,7 +8,7 @@ router.use(cookieParser());
 const GetProfile = require('../middleware/Profilemiddleware')
 const LoginAuth = require('../middleware/jwtmiddleware');
 const {  googleRoute, registerRoute , loginRoute , EditProfile, GetData } = require('../controller/accountControllers');
-const { addProgram } = require('../controller/programController')
+
 
 // google signin ( Oath2.0 ) routes 
 router.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
@@ -22,14 +22,13 @@ router.get('/auth/google/callback', passport.authenticate('google', {
 router.get('/google', googleRoute);  // google signin/login route
 router.post('/register', registerRoute); // normal signup route 
 router.post('/login' , loginRoute);   // normal signin route
-router.post('/create/profile' , LoginAuth , EditProfile)   // create profile 
-router.get('/get/profile' , GetProfile , GetData) 
+router.post('/create/profile' , LoginAuth , GetProfile , EditProfile)   // create profile 
+router.get('/get/profile' ,LoginAuth,  GetProfile , GetData) 
 router.post('/logout', (req, res) => {
     res.clearCookie('jwtoken', { path: '/' });
     res.status(200).json({ message: 'Logout successful' });
   });
 
-  // program related routes 
 
-  router.post('/create/program' , GetProfile ,addProgram )
+
 module.exports = router;

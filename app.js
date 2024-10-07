@@ -3,9 +3,11 @@ const express = require('express');
 const session = require('express-session');
 const passport = require('./router/passport'); // Corrected path
 dotenv.config({path:"./config.env"});
-
+const cors = require('cors');
 const app = express();
-
+app.use(cors({
+    origin: ['http://localhost:3000', 'http://192.168.1.107:3000']
+}));
 app.use(session({
     resave: false,
     saveUninitialized: true,
