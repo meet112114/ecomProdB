@@ -11,20 +11,15 @@ const UserProfile = new mongoose.Schema({
         type : String,
         required : true
     },
-    age : {
-        type: Number,
-        
+    address : {
+        type : String 
     },
-    gender : {
-        type: String,
-        
+    phone : {
+        type : Number
     },
-    height : {
-        type: Number,
-    },
-    weight : {
-        type: Number,
-    },
+    cartID : {
+        type : String
+    }
     
 });
 
