@@ -17,9 +17,23 @@ const UserProfile = new mongoose.Schema({
     phone : {
         type : Number
     },
-    cartID : {
-        type : String
-    }
+    cart: [
+        {   
+            productId : {
+                type: String,
+                required :true
+            },
+            color : {
+                type: String,
+                required :true
+            },
+            size : {
+                type: String,
+                required :true
+            }
+
+        }
+    ]
     
 });
 

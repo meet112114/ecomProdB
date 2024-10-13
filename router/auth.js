@@ -29,7 +29,7 @@ const uploadFiles = upload.fields([
 
 const GetProfile = require('../middleware/Profilemiddleware')
 const LoginAuth = require('../middleware/jwtmiddleware');
-const {   createProductWithImages , updateStock , GetProducts , getProductById} = require("../controller/programController")
+const {   createProductWithImages , updateStock , GetProducts , getProductById , addToCart, getCart ,deleteCartItem} = require("../controller/programController")
 const {  googleRoute, registerRoute , loginRoute , EditProfile, GetData } = require('../controller/accountControllers');
 
 
@@ -56,7 +56,9 @@ router.post('/logout', (req, res) => {
   router.post('/add/product' , uploadFiles , createProductWithImages)
   router.put('/update/stock' , updateStock)
   router.get('/get/product/:id' , getProductById )
-
+  router.post('/add/cart' , LoginAuth , GetProfile , addToCart)
+  router.get('/get/cart', LoginAuth , GetProfile  , getCart )
+  router.delete("/delete/cart-item/:itemId", LoginAuth , GetProfile ,deleteCartItem)
 
 
 module.exports = router;

@@ -1,4 +1,6 @@
 const Product = require("../models/product");
+const UserPro = require("../models/userProfile");
+
 
 // const insertProduct = async (req, res) => {
 //     try {
@@ -22,7 +24,7 @@ const Product = require("../models/product");
 
 const createProductWithImages = async (req, res) => {
     try {
-        // Debugging to check what files are being received
+        
         console.log('Files:', req.files);
 
         const { name, model, category, description, price } = req.body;
@@ -113,7 +115,7 @@ const getProductById = async (req,res) => {
         try{
 
             const product = await Product.findById(id)
-            console.log(product);
+            
             res.send(product)
 
         }catch(err){
@@ -124,6 +126,93 @@ const getProductById = async (req,res) => {
 
 }
 
+const addToCart = async (req, res) => {
+    const user = req.userProfile; // Get user profile from request
+    const { productId, color, size } = req.body; // Destructure body for product details
+
+    if (!productId || !color || !size) {
+        return res.status(400).json({ error: 'Product ID, color, and size are required.' });
+    }
+
+    try {
+        const userId = user._id; 
+        const userProfile = await UserPro.findById(userId); 
+
+        if (!userProfile) {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+
+        const cartItem = {
+            productId,
+            color,
+            size
+        };
+
+        // Check if item already exists in the cart
+        const existingCartItemIndex = userProfile.cart.findIndex(item => 
+            item.productId.toString() === productId && item.color === color && item.size === size
+        );
+
+        if (existingCartItemIndex > -1) {
+            return res.status(409).json({ message: 'Item already exists in the cart.' });
+        }
+
+        userProfile.cart.push(cartItem);
+        await userProfile.save(); 
+
+        res.status(200).json({ message: 'Item added to cart successfully!', cart: userProfile.cart });
+
+    } catch (error) {
+        console.error('Error adding item to cart:', error); 
+        res.status(500).json({ error: 'Failed to add item to cart. Please try again later.' });
+    }
+};
+
+const getCart = async(req,res) => {
+    const user = req.userProfile; 
+    const userProfile = await UserPro.findById(user._id);
+    try{
+        if(userProfile){
+            res.status(200).send(userProfile.cart)
+        }else{
+            res.status(400).json("Not Found")
+        }
+    }catch(error){
+        console.error('Error getting cart:', error); 
+        res.status(500).json({ error: ' Please try again later.' });
+    }
+}
+
+const deleteCartItem =  async (req, res) => {
+    const userId = req.userProfile._id; 
+    const itemId = req.params.itemId;
+
+    try {
+        // Find the user by their ID
+        const user = await UserPro.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Find the cart item by ID and remove it
+        const updatedCart = user.cart.filter(item => item._id.toString() !== itemId);
+
+        if (updatedCart.length === user.cart.length) {
+            return res.status(404).json({ error: 'Cart item not found' });
+        }
+
+        user.cart = updatedCart;
+        await user.save();
+
+        return res.status(200).json({ message: 'Cart item deleted successfully', cart: user.cart });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
 module.exports = {
-    createProductWithImages, updateStock ,GetProducts , getProductById
+    createProductWithImages, updateStock ,GetProducts , getProductById ,addToCart , getCart ,deleteCartItem
 };
