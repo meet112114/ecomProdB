@@ -1,5 +1,7 @@
+const { default: Stripe } = require("stripe");
 const Product = require("../models/product");
 const UserPro = require("../models/userProfile");
+const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 
 
 // const insertProduct = async (req, res) => {
@@ -212,7 +214,86 @@ const deleteCartItem =  async (req, res) => {
     }
 };
 
+const checkout = async (req, res) => {
+    const cart = req.body.cartItems; 
+
+    try {
+        const lineItems = await Promise.all(cart.map(async (item) => {
+            const productDetails = await Product.findById(item.productId); // Fetch product details using the model
+
+            if (!productDetails) {
+                throw new Error(`Product not found for ID: ${item.productId}`);
+            }
+
+            return {
+                price_data: {
+                    currency: "inr",
+                    product_data: {
+                        name: `${productDetails.name} (size : ${item.size})`, // Include size in product name for better clarity
+                        metadata: {
+                            color: item.color, 
+                        }
+                    },
+                    unit_amount: productDetails.price * 100, // Stripe expects amounts in cents/paise
+                },
+                quantity: "1"
+            };
+        }));
+
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            mode: "payment",
+            line_items: lineItems,
+            success_url: `http://your-success-url.com`, // Change to your actual success URL
+            cancel_url: `http://your-cancel-url.com` // Change to your actual cancel URL
+        });
+
+        res.json({ url: session.url });
+    } catch (err) {
+        console.error('Error in checkout:', err);
+        res.status(500).json({ message: err.message });
+    }
+};
+
+
+
+
+const handlePaymentSuccess = async (session) => {
+    // Logic for creating an order and clearing the cart
+    console.log('Payment successful. Creating order...');
+    const customerId = session.customer;
+    const lineItems = session.line_items;
+    // Fetch customer or cart info based on `customerId` or other details in session
+    // Create an order in your database and clear the cart
+    console.log(`Order created for customer: ${customerId}, Line Items: ${JSON.stringify(lineItems)}`);
+};
+
+// Stripe webhook controller
+const stripeWebhookHandler = async (req, res) => {
+    console.log("hiii")
+  const signature = req.headers['stripe-signature'];
+
+  try {
+    // Verify the webhook signature to ensure it's from Stripe
+    const event = stripe.webhooks.constructEvent(req.body, signature, process.env.STRIPE_WEBHOOK_SECRET);
+
+    // Handle successful payment event
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object;
+
+      // Call function to handle order creation and cart clearing
+      await handlePaymentSuccess(session);
+
+      res.status(200).json({ received: true });
+    } else {
+      res.status(400).send('Unhandled event type');
+    }
+  } catch (err) {
+    console.error(`Webhook signature verification failed: ${err.message}`);
+    res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+};
 
 module.exports = {
-    createProductWithImages, updateStock ,GetProducts , getProductById ,addToCart , getCart ,deleteCartItem
+    createProductWithImages, updateStock ,GetProducts , getProductById ,addToCart , getCart ,deleteCartItem , checkout ,stripeWebhookHandler 
 };

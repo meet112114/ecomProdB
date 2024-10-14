@@ -5,6 +5,7 @@ require('../database/connection');
 const router = express.Router();
 router.use(express.json());
 router.use(cookieParser());
+
 const path = require('path');
 const multer  = require('multer');
 
@@ -29,9 +30,9 @@ const uploadFiles = upload.fields([
 
 const GetProfile = require('../middleware/Profilemiddleware')
 const LoginAuth = require('../middleware/jwtmiddleware');
-const {   createProductWithImages , updateStock , GetProducts , getProductById , addToCart, getCart ,deleteCartItem} = require("../controller/programController")
+const {   createProductWithImages , updateStock , GetProducts , getProductById , addToCart, getCart ,deleteCartItem ,checkout ,stripeWebhookHandler} = require("../controller/programController")
 const {  googleRoute, registerRoute , loginRoute , EditProfile, GetData } = require('../controller/accountControllers');
-
+const bodyParser = require('body-parser');
 
 // google signin ( Oath2.0 ) routes 
 router.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
@@ -59,6 +60,8 @@ router.post('/logout', (req, res) => {
   router.post('/add/cart' , LoginAuth , GetProfile , addToCart)
   router.get('/get/cart', LoginAuth , GetProfile  , getCart )
   router.delete("/delete/cart-item/:itemId", LoginAuth , GetProfile ,deleteCartItem)
+  router.post("/checkout" ,LoginAuth , GetProfile,  checkout)
+  router.post('/webhook/stripe', bodyParser.raw({ type: 'application/json' }), stripeWebhookHandler);
 
 
 module.exports = router;

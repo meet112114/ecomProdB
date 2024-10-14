@@ -6,10 +6,12 @@ const passport = require('./router/passport'); // Corrected path
 dotenv.config({path:"./config.env"});
 const cors = require('cors');
 const app = express();
+const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
+
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://192.168.1.107:3000'],
+    origin: ['http://localhost:3000', 'http://192.168.1.107:3000' , "http://192.168.0.196:3000"],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: ['Content-Type'],
+    allowedHeaders: ['Content-Type' , 'Authorization'],
 }));
 app.use(session({
     resave: false,
