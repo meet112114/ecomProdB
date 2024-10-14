@@ -15,6 +15,8 @@ const productSchema = new mongoose.Schema({
     name: { type: String, required: true },       
     model: { type: String, required: true },
     category: {type: String , required :true},
+    fabric:{type : String},
+    design:{type: String },
     description: { type: String, required: true },
     price: { type: Number, required: true },      
     image_url: { type: String, required: true }, 

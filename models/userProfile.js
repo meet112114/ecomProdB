@@ -33,6 +33,13 @@ const UserProfile = new mongoose.Schema({
             }
 
         }
+    ],
+    orders: [
+        {   
+            orderId: {
+                type : String
+            }
+        }
     ]
     
 });

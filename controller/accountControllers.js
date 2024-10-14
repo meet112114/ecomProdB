@@ -3,6 +3,24 @@ const User = require('../models/user');
 const UserPro = require('../models/userProfile')
 const jwt = require('jsonwebtoken');
 
+const verifyLogin = (req , res) => {
+  const token = req.cookies.jwtoken; 
+
+  if (!token) {
+    return res.status(401).json({ message: 'Not authenticated' });
+  }
+
+  // Verify the token
+  jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: 'Token is invalid or expired' });
+    }
+
+    // Send back user data if token is valid
+    res.status(200).json({ user });
+  });
+}
+
 const googleRoute = async (req, res) => {
     if (req.user) {
       const email = req.user.emails[0].value;
@@ -158,4 +176,4 @@ const EditProfile = async (req, res) => {
     res.json(existingUserPro)
   }
 
-module.exports = { googleRoute, registerRoute , loginRoute , EditProfile , GetData };
+module.exports = { verifyLogin, googleRoute, registerRoute , loginRoute , EditProfile , GetData };
