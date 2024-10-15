@@ -7,25 +7,39 @@ dotenv.config({ path: "./config.env" });
 const cors = require('cors');
 const app = express();
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
-// Update CORS to specify the allowed origin
-app.use(cors({ 
-  origin: 'http://localhost:3000', // Use the full URL with http/https and port
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
-  allowedHeaders: ['Content-Type', 'Authorization'], 
-  credentials: true // This must be true to allow credentials (cookies)
-}));
 
-app.options('*', cors());
+
+const allowedOrigins = [
+  'http://localhost:3000', // Local frontend
+  'https://ecomprodb.onrender.com'
+  'https://ecomprodf.onrender.com'// Your production backend
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests from allowed origins or no origin (like Postman)
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true); // Allow the request
+    } else {
+      callback(new Error('Not allowed by CORS')); // Reject the request
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true // This must be true to allow cookies and credentials
+};
+
+app.use(cors(corsOptions));
 
 // Express session configuration
 app.use(session({
-  resave: false,
-  saveUninitialized: true,
   secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
   cookie: {
-    secure: true, // Set to true for production with HTTPS
-    httpOnly: true, 
-    sameSite: 'none' // Necessary for cross-origin requests
+    secure: true, // Set to true for production; ensure you use HTTPS
+    httpOnly: true,
+    sameSite: 'none' // Allow cross-origin cookies
   }
 }));
 
