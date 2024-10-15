@@ -8,21 +8,11 @@ const cors = require('cors');
 const app = express();
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 
-// Define allowed origins for CORS
-const allowedOrigins = ['http://localhost:3000', 'https://ecomprodb.onrender.com'];
-
-// Apply CORS middleware globally
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,  // Allow credentials like cookies and sessions
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  allowedHeaders: ['Content-Type', 'Authorization'],
+app.use(cors({ 
+  origin: '*', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+  headers: ['Content-Type', 'Authorization'], 
+  credentials: true // <--- Add this line
 }));
 
 // Handle preflight CORS requests for all routes
