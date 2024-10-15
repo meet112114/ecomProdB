@@ -4,7 +4,8 @@ const UserPro = require('../models/userProfile');
 
 const LoginAuth = async (req, res, next) => {
   try {
-    const token = req.cookies.jwtoken; // Assuming jwtoken is the cookie name
+    const token = req.cookies.jwtoken; 
+    console.log(token)// Assuming jwtoken is the cookie name
     if (!token) {
       return res.status(401).json({ error: 'Unauthorized: No token provided' });
     }
