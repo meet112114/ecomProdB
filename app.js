@@ -1,11 +1,21 @@
 const dotenv = require("dotenv");
 const express = require('express');
 const session = require('express-session');
+const MongoStore = require('connect-mongo'); // Import connect-mongo
+const mongoose = require('mongoose');
 const path = require('path');
 const passport = require('./router/passport');  // Corrected path to passport
 dotenv.config({ path: "./config.env" });
 const cors = require('cors');
 const app = express();
+
+mongoose.connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.error('MongoDB connection error:', err));
+
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 
 
@@ -31,16 +41,19 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// Express session configuration
 app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: true, // Set to true for production; ensure you use HTTPS
-    httpOnly: true,
-    sameSite: 'none' // Allow cross-origin cookies
-  }
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({ 
+        mongoUrl: process.env.MONGODB_URI, // MongoDB connection string
+        collectionName: 'sessions', // Optional: name of the sessions collection
+    }),
+    cookie: {
+        secure: true, // Set to true for production; ensure you use HTTPS
+        httpOnly: true,
+        sameSite: 'none' // Allow cross-origin cookies
+    }
 }));
 
 
