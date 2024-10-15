@@ -45,10 +45,14 @@ app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({ 
-        mongoUrl: process.env.MONGODB_URI, // MongoDB connection string
-        collectionName: 'sessions', // Optional: name of the sessions collection
-    }),
+    store: MongoStore.create({
+            mongoUrl: process.env.DATABASE, 
+            collectionName: 'sessions', 
+            mongoOptions: {
+                useNewUrlParser: true,
+                useUnifiedTopology: true
+            }
+        }),
     cookie: {
         secure: true, // Set to true for production; ensure you use HTTPS
         httpOnly: true,
