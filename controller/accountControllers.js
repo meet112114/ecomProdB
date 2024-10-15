@@ -128,9 +128,10 @@ const registerRoute = async (req, res) => {
     
         const token = jwt.sign({ email: userLogin.email }, process.env.SECRET_KEY, { expiresIn: '7d' });
     
-        res.cookie('jwtoken', token, {
-          expires: new Date(Date.now() + 2589200000),
-          httpOnly: true,
+         res.cookie('jwtoken', token, {
+        httpOnly: true, 
+        secure: true, 
+        sameSite: 'None', 
         });
     
         return res.json({ message: 'User login successful', token });
