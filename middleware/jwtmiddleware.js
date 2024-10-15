@@ -4,6 +4,7 @@ const UserPro = require('../models/userProfile');
 
 const LoginAuth = async (req, res, next) => {
   try {
+    console.log(req.cookies)
     const token = req.cookies.jwtoken; 
     console.log(token)// Assuming jwtoken is the cookie name
     if (!token) {
