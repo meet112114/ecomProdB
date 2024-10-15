@@ -8,12 +8,22 @@ const cors = require('cors');
 const app = express();
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 
-app.use(cors({
-    origin: true,
-    credentials: true,  
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: ['Content-Type' , 'Authorization'],
+const allowedOrigins = ['http://localhost:3000', 'https://ecomprodb.onrender.com'];
+
+app.options('*', cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
 app.use(session({
     resave: false,
     saveUninitialized: true,
