@@ -69,9 +69,7 @@ router.post('/logout', (req, res) => {
   router.delete("/delete/cart-item/:itemId", LoginAuth , GetProfile ,deleteCartItem)
   router.post("/checkout" ,LoginAuth , GetProfile,  checkout)
   router.get("/get/orders" ,LoginAuth , GetProfile, GetOrders)
-  router.get("/hii", (req, res) => {
-    res.send("hiiii");
-  });
+ 
  
 
 
