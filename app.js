@@ -10,9 +10,9 @@ const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 
 
 const allowedOrigins = [
-  'http://localhost:3000', // Local frontend
-  'https://ecomprodb.onrender.com'
-  'https://ecomprodf.onrender.com'// Your production backend
+  'http://localhost:3000', 
+  'https://ecomprodb.onrender.com',
+  'https://ecomprodf.onrender.com'
 ];
 
 const corsOptions = {
