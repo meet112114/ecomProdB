@@ -10,6 +10,7 @@ const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 
 app.use(cors({
     origin: true,
+    credentials: true,  
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: ['Content-Type' , 'Authorization'],
 }));
