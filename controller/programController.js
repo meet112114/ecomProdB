@@ -384,5 +384,5 @@ const stripeWebhookHandler = (req, res) => {
   };
 
 module.exports = {
-    GetHii ,  createProductWithImages, updateStock ,GetProducts , getProductById ,addToCart , getCart ,deleteCartItem , checkout ,stripeWebhookHandler , GetOrders
+     createProductWithImages, updateStock ,GetProducts , getProductById ,addToCart , getCart ,deleteCartItem , checkout ,stripeWebhookHandler , GetOrders
 };
