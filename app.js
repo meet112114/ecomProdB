@@ -9,7 +9,7 @@ dotenv.config({ path: "./config.env" });
 const cors = require('cors');
 const app = express();
 
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect(process.env.DATABASE, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
