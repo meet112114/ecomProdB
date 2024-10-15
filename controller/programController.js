@@ -256,8 +256,10 @@ const deleteCartItem =  async (req, res) => {
 const checkout = async (req, res) => {
     const user = req.userProfile;
     const userId = user._id;
+    const baseUrl = req.body.baseUrl;
     const cart = req.body.cartItems; 
-
+    const successUrl = `${baseUrl}/orders`;
+    const cancelUrl = `${baseUrl}/cancel`;
     try {
         const lineItems = await Promise.all(cart.map(async (item) => {
             const productDetails = await Product.findById(item.productId); // Fetch product details using the model
@@ -285,8 +287,8 @@ const checkout = async (req, res) => {
             payment_method_types: ["card"],
             mode: "payment",
             line_items: lineItems,
-            success_url: `http://192.168.0.100:3000/orders`, // Change to your actual success URL
-            cancel_url: `http://your-cancel-url.com`,             // Change to your actual cancel URL
+            success_url: successUrl, // Change to your actual success URL
+            cancel_url: cancelUrl ,             // Change to your actual cancel URL
             metadata: {
                 cartItems: JSON.stringify(cart),  // Pass your cart items as metadata
                 customerId: JSON.stringify(userId),  // You can also pass other custom data like customer ID
@@ -342,6 +344,7 @@ const stripeWebhookHandler = (req, res) => {
 
 
   const createOrder = async (checkoutSession) => {
+
     try {
         const orderData = {
             customerEmail: checkoutSession.customer_details.email,
