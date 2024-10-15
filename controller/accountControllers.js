@@ -2,55 +2,74 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const UserPro = require('../models/userProfile')
 const jwt = require('jsonwebtoken');
+const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 
+const verifyLogin = (req , res) => {
+  const token = req.cookies.jwtoken; 
+
+  if (!token) {
+    return res.status(401).json({ message: 'Not authenticated' });
+  }
+
+  // Verify the token
+  jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: 'Token is invalid or expired' });
+    }
+
+    // Send back user data if token is valid
+    res.status(200).json({ user });
+  });
+}
 const googleRoute = async (req, res) => {
-    if (req.user) {
-      const email = req.user.emails[0].value;
-      const name = req.user.displayName;
-      const googleId = req.user.id;
-      try {
-        let user = await User.findOne({ email });
-  
-        if (!user) {
-          user = new User({ email, googleId, name });
-          await user.save();
-          const userprofile = new UserPro({ refId: user._id, name})
-          await userprofile.save();
-          console.log('User saved successfully.');
+  if (req.user) {
+    const email = req.user.emails[0].value;
+    const name = req.user.displayName;
+    const googleId = req.user.id;
+    try {
+      let user = await User.findOne({ email });
 
-          let token = jwt.sign({  email },process.env.SECRET_KEY, { expiresIn: '1d' });
-        
-          res.cookie('jwtoken', token, {
-          expires: new Date(Date.now() + 2589200000),
-          httpOnly: true
-          });
+      if (!user) {
+        user = new User({ email, googleId, name });
+        await user.save();
+        const userprofile = new UserPro({ refId: user._id, name})
+        await userprofile.save();
+        console.log('User saved successfully.');
 
-          res.redirect('http://localhost:3000/google');
-
-        } else if (user.password) {
-          return res.status(400).json({ message: 'User email exists with normal registration' });
-        } 
-        else {
-        console.log('hi')
         let token = jwt.sign({  email },process.env.SECRET_KEY, { expiresIn: '1d' });
-        console.log('Generated Token:', token);
-        
+      
         res.cookie('jwtoken', token, {
-          expires: new Date(Date.now() + 2589200000),
-          httpOnly: true
+        expires: new Date(Date.now() + 2589200000),
+        httpOnly: true
         });
 
-        res.redirect('http://localhost:3000/google');
-        }
-  
-      } catch (error) {
-        console.error('Error handling user login:', error);
-        res.status(500).json({ error: "An error occurred while processing the login" });
+        res.redirect(`${BASE_URL}/google`);
+
+      } else if (user.password) {
+        return res.status(400).json({ message: 'User email exists with normal registration' });
+      } 
+      else {
+      console.log('hi')
+      let token = jwt.sign({  email },process.env.SECRET_KEY, { expiresIn: '1d' });
+      console.log('Generated Token:', token);
+      
+      res.cookie('jwtoken', token, {
+        expires: new Date(Date.now() + 2589200000),
+        httpOnly: true
+      });
+
+      res.redirect(`${BASE_URL}/google`);
       }
-    } else {
-      res.status(400).json({ message: "Error logging in, try again later" });
+
+    } catch (error) {
+      console.error('Error handling user login:', error);
+      res.status(500).json({ error: "An error occurred while processing the login" });
     }
-  };
+  } else {
+    res.status(400).json({ message: "Error logging in, try again later" });
+  }
+};
+
 
 
 
@@ -158,4 +177,4 @@ const EditProfile = async (req, res) => {
     res.json(existingUserPro)
   }
 
-module.exports = { googleRoute, registerRoute , loginRoute , EditProfile , GetData };
+module.exports = { verifyLogin, googleRoute, registerRoute , loginRoute , EditProfile , GetData };
