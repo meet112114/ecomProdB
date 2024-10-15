@@ -23,6 +23,9 @@ const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 //         });
 //     }
 // };
+const GetHii = (req,res) => {
+    res.send("hiiiii")
+} 
 
 const createProductWithImages = async (req, res) => {
     try {
@@ -383,5 +386,5 @@ const stripeWebhookHandler = (req, res) => {
   };
 
 module.exports = {
-    createProductWithImages, updateStock ,GetProducts , getProductById ,addToCart , getCart ,deleteCartItem , checkout ,stripeWebhookHandler , GetOrders
+    GetHii ,  createProductWithImages, updateStock ,GetProducts , getProductById ,addToCart , getCart ,deleteCartItem , checkout ,stripeWebhookHandler , GetOrders
 };
