@@ -129,7 +129,7 @@ const registerRoute = async (req, res) => {
         const token = jwt.sign({ email: userLogin.email }, process.env.SECRET_KEY, { expiresIn: '7d' });
     
          res.cookie('jwtoken', token, {
-        httpOnly: true, 
+        httpOnly: false, 
         secure: true, 
         sameSite: 'None', 
         });
