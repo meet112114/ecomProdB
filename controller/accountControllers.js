@@ -38,9 +38,12 @@ const googleRoute = async (req, res) => {
 
         let token = jwt.sign({  email },process.env.SECRET_KEY, { expiresIn: '1d' });
       
+      
+
         res.cookie('jwtoken', token, {
-        expires: new Date(Date.now() + 2589200000),
-        httpOnly: true
+        httpOnly: true, 
+        secure: true, 
+        sameSite: 'None', 
         });
 
         res.redirect(`${BASE_URL}/google`);
@@ -53,10 +56,11 @@ const googleRoute = async (req, res) => {
       let token = jwt.sign({  email },process.env.SECRET_KEY, { expiresIn: '1d' });
       console.log('Generated Token:', token);
       
-      res.cookie('jwtoken', token, {
-        expires: new Date(Date.now() + 2589200000),
-        httpOnly: true
-      });
+       res.cookie('jwtoken', token, {
+        httpOnly: true, 
+        secure: true, 
+        sameSite: 'None', 
+        });
 
       res.redirect(`${BASE_URL}/google`);
       }
