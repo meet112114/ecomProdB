@@ -7,12 +7,12 @@ dotenv.config({ path: "./config.env" });
 const cors = require('cors');
 const app = express();
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
-
+// Update CORS to specify the allowed origin
 app.use(cors({ 
-  origin: '*', 
+  origin: 'http://localhost:3000', // Use the full URL with http/https and port
   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
-  headers: ['Content-Type', 'Authorization'], 
-  credentials: true 
+  allowedHeaders: ['Content-Type', 'Authorization'], 
+  credentials: true // This must be true to allow credentials (cookies)
 }));
 
 app.options('*', cors());
@@ -23,9 +23,9 @@ app.use(session({
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET,
   cookie: {
-    secure: true, 
+    secure: true, // Set to true for production with HTTPS
     httpOnly: true, 
-    sameSite: 'none' 
+    sameSite: 'none' // Necessary for cross-origin requests
   }
 }));
 
