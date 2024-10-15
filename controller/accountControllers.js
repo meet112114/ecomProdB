@@ -134,7 +134,7 @@ const registerRoute = async (req, res) => {
         sameSite: 'None', 
         });
     
-        return res.json({ message: 'User login successful', token });
+         res.send(token);
       }     
       
      
