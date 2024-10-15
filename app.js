@@ -12,10 +12,9 @@ app.use(cors({
   origin: '*', 
   methods: ['GET', 'POST', 'PUT', 'DELETE'], 
   headers: ['Content-Type', 'Authorization'], 
-  credentials: true // <--- Add this line
+  credentials: true 
 }));
 
-// Handle preflight CORS requests for all routes
 app.options('*', cors());
 
 // Express session configuration
@@ -24,10 +23,12 @@ app.use(session({
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET,
   cookie: {
-    secure: process.env.NODE_ENV === 'production',  // Use secure cookies in production
-    sameSite: 'lax',  // Allows CORS credentials sharing with cross-origin
+    secure: true, 
+    httpOnly: true, 
+    sameSite: 'none' 
   }
 }));
+
 
 // Initialize passport for authentication
 app.use(passport.initialize());
