@@ -5,7 +5,7 @@ require('../database/connection');
 const router = express.Router();
 const GetProfile = require('../middleware/Profilemiddleware')
 const LoginAuth = require('../middleware/jwtmiddleware');
-const {  GetHii, createProductWithImages , updateStock , GetProducts , getProductById , addToCart, getCart ,deleteCartItem ,checkout ,stripeWebhookHandler ,GetOrders} = require("../controller/programController")
+const {   createProductWithImages , updateStock , GetProducts , getProductById , addToCart, getCart ,deleteCartItem ,checkout ,stripeWebhookHandler ,GetOrders} = require("../controller/programController")
 const {verifyLogin,  googleRoute, registerRoute , loginRoute , EditProfile, GetData } = require('../controller/accountControllers');
 
 const bodyParser = require('body-parser');
@@ -69,7 +69,9 @@ router.post('/logout', (req, res) => {
   router.delete("/delete/cart-item/:itemId", LoginAuth , GetProfile ,deleteCartItem)
   router.post("/checkout" ,LoginAuth , GetProfile,  checkout)
   router.get("/get/orders" ,LoginAuth , GetProfile, GetOrders)
-  router.get("/get/hii" , GetHii)
+  router.get("/get/hii" , (re,res)=> {
+    res.send("hiiii")
+  })
  
 
 

@@ -23,9 +23,7 @@ const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY)
 //         });
 //     }
 // };
-const GetHii = (req,res) => {
-    res.send("hiiiii")
-} 
+
 
 const createProductWithImages = async (req, res) => {
     try {
