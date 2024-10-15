@@ -41,7 +41,6 @@ const googleRoute = async (req, res) => {
       
 
         res.cookie('jwtoken', token, {
-        domain: 'https://ecomprodb.onrender.com',
         httpOnly: true, 
         secure: true, 
         sameSite: 'None', 
@@ -58,7 +57,6 @@ const googleRoute = async (req, res) => {
       console.log('Generated Token:', token);
       
        res.cookie('jwtoken', token, {
-        domain: 'https://ecomprodb.onrender.com',
         httpOnly: true, 
         secure: true, 
         sameSite: 'None', 
@@ -131,7 +129,6 @@ const registerRoute = async (req, res) => {
         const token = jwt.sign({ email: userLogin.email }, process.env.SECRET_KEY, { expiresIn: '7d' });
     
          res.cookie('jwtoken', token, {
-        domain: 'https://ecomprodb.onrender.com',
         httpOnly: true, 
         secure: true, 
         sameSite: 'None', 
