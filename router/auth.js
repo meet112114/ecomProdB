@@ -41,8 +41,8 @@ const uploadFiles = upload.fields([
 
 
 // google signin ( Oath2.0 ) routes 
-router.get('/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
-router.get('/google/callback', passport.authenticate('google', { 
+router.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
+router.get('/auth/google/callback', passport.authenticate('google', { 
     failureRedirect: '/login',
     successRedirect: '/google'
 }));
