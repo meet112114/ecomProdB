@@ -22,7 +22,7 @@ const verifyLogin = (req , res) => {
   });
 }
 const googleRoute = async (req, res) => {
-  console.log('User:', req.user);
+  console.log('User:', req);
   if (req.user) {
     const email = req.user.emails[0].value;
     const name = req.user.displayName;
